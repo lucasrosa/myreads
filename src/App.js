@@ -7,6 +7,8 @@ import Book from './Book'
 
 
 class BooksApp extends React.Component {
+  timeoutFunctionId = null
+
   state = {
     /**
      * TODO: Instead of using this state variable to keep track of which page
@@ -14,6 +16,7 @@ class BooksApp extends React.Component {
      * users can use the browser's back and forward buttons to navigate between
      * pages, as well as provide a good URL they can bookmark and share.
      */
+    searchQuery: "",
     showSearchPage: false,
     books: [],
     searchedBooks: []
@@ -58,7 +61,7 @@ class BooksApp extends React.Component {
       })
   }
 
-  updateSearch = (searchTerm) => {
+  searchBooks = (searchTerm) => {
     if (searchTerm.length > 0) {
       // Search for the books in the API
       BooksAPI.search(searchTerm)
@@ -94,6 +97,18 @@ class BooksApp extends React.Component {
     }
   }
 
+  handleSearchChange = (searchTerm) => {
+    // Updates the current search query
+    this.setState(() => ({
+      searchQuery: searchTerm
+    }))
+
+    clearTimeout(this.timeoutFunctionId)
+    this.timeoutFunctionId = setTimeout((() => {
+      this.searchBooks(searchTerm)
+    }), 500)
+  }
+
   render() {
     const readBooks = this.state.books.filter((book) => (book.shelf==="read"))
     const currentlyReadingBooks = this.state.books.filter((book) => (book.shelf==="currentlyReading"))
@@ -107,24 +122,15 @@ class BooksApp extends React.Component {
             <div className="search-books-bar">
               <a className="close-search" onClick={() => this.setState({ showSearchPage: false })}>Close</a>
               <div className="search-books-input-wrapper">
-                {/*
-                  NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                  You can find these search terms here:
-                  https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-
-                  However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                  you don't find a specific author or title. Every search is limited by search terms.
-                */}
-                <input type="text" placeholder="Search by title or author" onChange={(event) => this.updateSearch(event.target.value)}/>
-
+                <input value={this.state.searchQuery} type="text" placeholder="Search by title or author" onChange={(event) => this.handleSearchChange(event.target.value)}/>
               </div>
             </div>
             <div className="search-books-results">
               <ol className="books-grid">
                 {searchedBooks.map((book) => (
-                      <li key={book.id}>
-                          <Book data={book} updateBook={this.updateBook} />
-                      </li>
+                  <li key={book.id}>
+                      <Book data={book} updateBook={this.updateBook} />
+                  </li>
                 ))}
               </ol>
             </div>
