@@ -6,11 +6,13 @@ class Book extends Component {
     }
 
     render() {
+        const shelf = this.props.data.shelf || "none"
+        
         return <div className="book">
             <div className="book-top">
-            <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${this.props.data.imageLinks.thumbnail})` }}></div>
+            <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${this.props.data.imageLinks && this.props.data.imageLinks.thumbnail})` }}></div>
             <div className="book-shelf-changer">
-                <select value={this.props.data.shelf} onChange={(event) => {this.props.updateBook(this.props.data, event.target.value)}}>
+                <select value={shelf} onChange={(event) => {this.props.updateBook(this.props.data, event.target.value)}}>
                     <option value="move" disabled>Move to...</option>
                     <option value="currentlyReading">Currently Reading</option>
                     <option value="wantToRead">Want to Read</option>
@@ -20,7 +22,7 @@ class Book extends Component {
             </div>
             </div>
             <div className="book-title">{this.props.data.title}</div>
-            <div className="book-authors">{this.props.data.authors.map((author, index) => (
+            <div className="book-authors">{this.props.data.authors && this.props.data.authors.map((author, index) => (
                 // If it is the last name in the list, don't add the comma
                 (index+1)===this.props.data.authors.length ? author : author + ', '
             ))}</div>
