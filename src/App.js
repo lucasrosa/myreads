@@ -4,6 +4,8 @@ import './App.css'
 
 import BookShelf from './BookShelf'
 import Book from './Book'
+import { Route } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 
 class BooksApp extends React.Component {
@@ -117,10 +119,13 @@ class BooksApp extends React.Component {
 
     return (
       <div className="app">
-        {this.state.showSearchPage ? (
+        <Route exact path='/search' render={() => (
           <div className="search-books">
             <div className="search-books-bar">
-              <a className="close-search" onClick={() => this.setState({ showSearchPage: false })}>Close</a>
+              <Link 
+                  to="/"
+                  className='close-search'
+              >Close</Link>
               <div className="search-books-input-wrapper">
                 <input value={this.state.searchQuery} type="text" placeholder="Search by title or author" onChange={(event) => this.handleSearchChange(event.target.value)}/>
               </div>
@@ -135,7 +140,8 @@ class BooksApp extends React.Component {
               </ol>
             </div>
           </div>
-        ) : (
+        )} />
+        <Route exact path='/' render={() => (
           <div className="list-books">
             <div className="list-books-title">
               <h1>MyReads</h1>
@@ -148,10 +154,12 @@ class BooksApp extends React.Component {
               </div>
             </div>
             <div className="open-search">
-              <a onClick={() => this.setState({ showSearchPage: true })}>Add a book</a>
+              <Link 
+                    to="/search"
+                >Add a book</Link>
             </div>
           </div>
-        )}
+        )} />
       </div>
     )
   }
